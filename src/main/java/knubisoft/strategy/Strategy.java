@@ -7,5 +7,5 @@ public interface Strategy {
 
     boolean isApplyable(String content);
 
-    Table reader(File file);
+    Table read(File file);
 }

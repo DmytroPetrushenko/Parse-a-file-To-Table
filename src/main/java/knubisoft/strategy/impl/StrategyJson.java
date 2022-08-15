@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Map;
 import knubisoft.dto.Table;
 import knubisoft.strategy.Strategy;
-import knubisoft.util.TableBuilderUtil;
+import knubisoft.util.JacksonTableBuilderUtils;
 import lombok.SneakyThrows;
 
 public class StrategyJson implements Strategy {
@@ -19,10 +19,10 @@ public class StrategyJson implements Strategy {
 
     @Override
     @SneakyThrows
-    public Table reader(File file) {
+    public Table read(File file) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNodeTree = mapper.readTree(file);
-        TableBuilderUtil builder = TableBuilderUtil.getBuilder();
+        JacksonTableBuilderUtils builder = JacksonTableBuilderUtils.getBuilder();
         Map<Integer, String> mapping = builder.buildMapping(jsonNodeTree.get(0));
         return builder.buildTable(jsonNodeTree, mapping);
     }

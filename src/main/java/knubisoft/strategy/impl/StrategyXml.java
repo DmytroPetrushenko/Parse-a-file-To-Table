@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.Map;
 import knubisoft.dto.Table;
 import knubisoft.strategy.Strategy;
-import knubisoft.util.TableBuilderUtil;
+import knubisoft.util.JacksonTableBuilderUtils;
 import lombok.SneakyThrows;
 
 public class StrategyXml implements Strategy {
@@ -20,15 +20,15 @@ public class StrategyXml implements Strategy {
 
     @Override
     @SneakyThrows
-    public Table reader(File file) {
-        JsonNode nodes = getNodes(file);
-        TableBuilderUtil builder = TableBuilderUtil.getBuilder();
+    public Table read(File file) {
+        JsonNode nodes = getChildListNode(file);
+        JacksonTableBuilderUtils builder = JacksonTableBuilderUtils.getBuilder();
         Map<Integer, String> mapping = builder.buildMapping(nodes.get(0));
         return builder.buildTable(nodes, mapping);
     }
 
     @SneakyThrows
-    private JsonNode getNodes(File file) {
+    private JsonNode getChildListNode(File file) {
         XmlMapper mapper = new XmlMapper();
         mapper.registerModule(new JavaTimeModule());
         JsonNode jsonNodeTree = mapper.readTree(file);

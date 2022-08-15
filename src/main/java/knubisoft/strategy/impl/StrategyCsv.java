@@ -21,7 +21,7 @@ public class StrategyCsv implements Strategy {
 
     @Override
     @SneakyThrows
-    public Table reader(File file) {
+    public Table read(File file) {
         CSVReader readerCsv = new CSVReader(new FileReader(file));
         Map<Integer, String> mapping = mapping(readerCsv.readNext());
         return buildTable(mapping, readerCsv);

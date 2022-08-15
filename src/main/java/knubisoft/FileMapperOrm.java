@@ -22,7 +22,7 @@ public class FileMapperOrm {
     public <T> List<T> transform(File file, Class<T> clazz) {
         String fileContent = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         Strategy strategy = findStrategyStream(fileContent);
-        Table table = strategy.reader(file);
+        Table table = strategy.read(file);
         return getEntitiesList(table, clazz);
     }
 
@@ -36,19 +36,12 @@ public class FileMapperOrm {
     @SneakyThrows
     private <T> T parseTableToEntity(Map<String, String> row, Class<T> clazz) {
         TypeFieldsUtil typeFieldsUtil = TypeFieldsUtil.getObject();
-        T instance = clazz.getConstructor().newInstance();
+        T instance = (T) getObjectByReflection(clazz);
         Field[] fields = clazz.getDeclaredFields();
-        Arrays.stream(fields)
-                .forEach(field -> {
-                    try {
-                        field.setAccessible(true);
-                        Object value = typeFieldsUtil
-                                .transformStringToTypeField(row.get(field.getName()), field);
-                        field.set(instance, value);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        Map<Field, Object> map = Arrays.stream(fields)
+                .collect(Collectors.toMap(field -> field, field -> typeFieldsUtil
+                        .transformStringToTypeField(row.get(field.getName()), field)));
+        map.forEach((key, value) -> setInstance(instance, key, value));
         return instance;
     }
 
@@ -72,4 +65,9 @@ public class FileMapperOrm {
         return clazz.getConstructor().newInstance();
     }
 
+    @SneakyThrows
+    private <T> void setInstance(T instance, Field field, Object value) {
+        field.setAccessible(true);
+        field.set(instance, value);
+    }
 }

@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import knubisoft.dto.Table;
 
-public class TableBuilderUtil {
-    private static TableBuilderUtil builder;
+public class JacksonTableBuilderUtils {
+    private static JacksonTableBuilderUtils builder;
 
-    public static TableBuilderUtil getBuilder() {
+    public static JacksonTableBuilderUtils getBuilder() {
         if (builder == null) {
-            builder = new TableBuilderUtil();
+            builder = new JacksonTableBuilderUtils();
         }
         return builder;
     }
